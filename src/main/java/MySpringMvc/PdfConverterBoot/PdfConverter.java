@@ -20,44 +20,39 @@ public class PdfConverter {
 
 		String os = System.getProperty("os.name").toLowerCase();
 
-		long totalSizeOfFiles=0L;
-		
-		String extractedPath=null;
-		
+		long totalSizeOfFiles = 0L;
+
+		String extractedPath = null;
+
 		System.out.println("operating system of the client is  " + os);
 		String folderPath = args[0];
 
 		System.out.println("folderPath  " + folderPath);
 		List<File> filesInFolder = Files.walk(Paths.get(folderPath)).filter(Files::isRegularFile).map(Path::toFile)
 				.collect(Collectors.toList());
-		int noOfFiles=0;
-		
-		
-		
+		int noOfFiles = 0;
+
 		for (File officefile : filesInFolder) {
 
-			
-			
 			if (officefile.getName().endsWith(".pdf") || officefile.getName().endsWith(".PDF")) {
 
 				noOfFiles++;
-				
-				totalSizeOfFiles= totalSizeOfFiles+officefile.length();
-				
+
+				totalSizeOfFiles = totalSizeOfFiles + officefile.length();
+
 				System.out.println("Extracting text for the file" + officefile.getName());
 
 				int nameIndex = officefile.getName().lastIndexOf(".");
 
 				String textNaming1 = officefile.getName().substring(0, nameIndex);
 
-				
 				String path = officefile.getAbsolutePath();
 				String seperateOutsideFolder = null;
-				String textdirectoryString= null;
+				String textdirectoryString = null;
 				if (os.contains("windows")) {
 
 					seperateOutsideFolder = path.substring(0, path.lastIndexOf("\\"));
-					
+
 				}
 
 				else {
@@ -69,21 +64,22 @@ public class PdfConverter {
 				File textdirectory = new File(seperateOutsideFolder);
 				textdirectory.mkdir();
 
-				
-				if(os.contains("windows")){
+				if (os.contains("windows")) {
 					textdirectoryString = textdirectory.getPath() + "\\" + textNaming1.concat(".txt");
-				}
-				else {
+				} else {
 					textdirectoryString = textdirectory.getPath() + "/" + textNaming1.concat(".txt");
 				}
-				
+
 				System.out.println("directory made for text folder " + textdirectory.getAbsolutePath());
-				
 
 				StringBuilder seperateTextFolderBuilder = new StringBuilder(textdirectoryString);
+				int indexToAppendTextFolderName = 0;
+				if (path.contains("Downloads")) {
 
-				int indexToAppendTextFolderName = path.lastIndexOf("Downloads") + 10;
-
+					indexToAppendTextFolderName = path.lastIndexOf("Downloads") + 10;
+				} else {
+					indexToAppendTextFolderName = path.lastIndexOf("Documents") + 9;
+				}
 				textdirectoryString = seperateTextFolderBuilder
 						.insert(indexToAppendTextFolderName, "TextFolder" + File.separator).toString();
 
@@ -93,8 +89,8 @@ public class PdfConverter {
 
 				File textDirectory = new File(textfolderExtract);
 				textDirectory.mkdirs();
-				
-				extractedPath=textDirectory.getPath();
+
+				extractedPath = textDirectory.getPath();
 
 				final String FILENAME = textdirectoryString;
 
@@ -131,10 +127,10 @@ public class PdfConverter {
 				System.out.println(officefile.getName() + " is not a pdf file skipping the file");
 			}
 		}
-		System.out.println( "No of pdf files proecssed = "+noOfFiles);
-		System.out.println("Total size of files= "+totalSizeOfFiles/(1024*1024)+ " MB");
-		System.out.println("Folder given as input = "+folderPath);
-		System.out.println("Extracted text to "+extractedPath);
+		System.out.println("No of pdf files proecssed = " + noOfFiles);
+		System.out.println("Total size of files= " + totalSizeOfFiles / (1024 * 1024) + " MB");
+		System.out.println("Folder given as input = " + folderPath);
+		System.out.println("Extracted text to " + extractedPath);
 		System.out.println("End Of Execution");
 		System.exit(0);
 	}
