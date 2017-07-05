@@ -28,6 +28,16 @@ public class PdfConverter {
 		String folderPath = args[0];
 
 		System.out.println("folderPath  " + folderPath);
+
+		int indexOflastFile = folderPath.lastIndexOf(File.separator) + 1;
+
+		int endIndex = folderPath.length();
+
+		String NameOffolder = folderPath.substring(indexOflastFile, endIndex).concat("_Text");
+
+		String modifiedBasePath = folderPath.substring(0, indexOflastFile) + "TextFolder" + File.separator
+				+ NameOffolder;
+
 		List<File> filesInFolder = Files.walk(Paths.get(folderPath)).filter(Files::isRegularFile).map(Path::toFile)
 				.collect(Collectors.toList());
 		int noOfFiles = 0;
@@ -49,50 +59,47 @@ public class PdfConverter {
 				String path = officefile.getAbsolutePath();
 				String seperateOutsideFolder = null;
 				String textdirectoryString = null;
-				if (os.contains("windows")) {
 
-					seperateOutsideFolder = path.substring(0, path.lastIndexOf("\\"));
-
-				}
-
-				else {
-					seperateOutsideFolder = path.substring(0, path.lastIndexOf("/"));
-
-				}
-				System.out.println(seperateOutsideFolder + "  seperateOutsideFolder");
-
-				File textdirectory = new File(seperateOutsideFolder);
+				File textdirectory = new File(modifiedBasePath);
 				textdirectory.mkdir();
-
-				if (os.contains("windows")) {
-					textdirectoryString = textdirectory.getPath() + "\\" + textNaming1.concat(".txt");
-				} else {
-					textdirectoryString = textdirectory.getPath() + "/" + textNaming1.concat(".txt");
-				}
 
 				System.out.println("directory made for text folder " + textdirectory.getAbsolutePath());
 
+				textdirectoryString = textdirectory.getPath() + File.separator + textNaming1.concat(".txt");
+
 				StringBuilder seperateTextFolderBuilder = new StringBuilder(textdirectoryString);
 				int indexToAppendTextFolderName = 0;
-				if (path.contains("Downloads")) {
 
-					indexToAppendTextFolderName = path.lastIndexOf("Downloads") + 10;
-				} else {
-					indexToAppendTextFolderName = path.lastIndexOf("Documents") + 9;
-				}
-				textdirectoryString = seperateTextFolderBuilder
-						.insert(indexToAppendTextFolderName, "TextFolder" + File.separator).toString();
+				// textdirectoryString = seperateTextFolderBuilder
+				// .insert(indexToAppendTextFolderName, "TextFolder" +
+				// File.separator).toString();
 
 				int indexFortextDirectory = textdirectoryString.lastIndexOf(File.separator);
 
 				String textfolderExtract = textdirectoryString.substring(0, indexFortextDirectory);
 
-				File textDirectory = new File(textfolderExtract);
+				// String Currentfolder= textfolderExtract.replace(folderPath,
+				// NameOffolder);
+
+				String pathModifiedwithText = null;
+
+				if ((officefile.getPath().length() + 5) > modifiedBasePath.length()) {
+
+					pathModifiedwithText = modifiedBasePath
+							+ officefile.getParent().substring(endIndex, officefile.getParent().length());
+				} else {
+					pathModifiedwithText = modifiedBasePath;
+				}
+
+				File textDirectory = new File(pathModifiedwithText);
+
 				textDirectory.mkdirs();
 
 				extractedPath = textDirectory.getPath();
 
-				final String FILENAME = textdirectoryString;
+				final String FILENAME = extractedPath + File.separator + textNaming1.concat(".txt");
+
+				System.out.println("Text folder directory for the converted file" + officefile.getName() + FILENAME);
 
 				Document pdf = PDF.open(officefile);
 				StringBuilder text = new StringBuilder(1024);

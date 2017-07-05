@@ -1,1 +1,3 @@
-MySpringMvc/PdfConverterBoot/PdfConverter.class
+MySpringMvc\PdfConverterBoot\AddLabelForFiles\MetaDataStamper.class
+MySpringMvc\PdfConverterBoot\PdfConverter.class
+MySpringMvc\PdfConverterBoot\AddLabelForFiles\ParallelMetaDataLabeller.class
